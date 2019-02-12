@@ -10,7 +10,7 @@
 #include "parameters.h"
 
 typedef struct _Individual{
-	Parameters * params;
+	Parameters * parameters;
 	ge_GIF * gif;
 	char * outputfile;
 	Cell ** board;

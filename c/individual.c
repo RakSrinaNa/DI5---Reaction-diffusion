@@ -17,7 +17,7 @@ Individual * IndividualCreate(Parameters * params)
 	if(params == NULL)
 		return NULL;
 	Individual * individual = malloc(sizeof(Individual));
-	individual->params = params;
+	individual->parameters = params;
 	
 	Cell ** board = malloc(sizeof(Cell *) * size_x);
 	for(int x = 0; x < size_x; x++)
@@ -46,15 +46,19 @@ void IndividualDestroy(Individual * individual)
 	for(int x = 0; x < size_x; x++)
 		free(individual->board[x]);
 	free(individual->board);
-	ParametersDestroy(individual->params);
+	ParametersDestroy(individual->parameters);
 	free(individual->outputfile);
 	free(individual);
 }
 
 void IndividualGenerate(Individual * individual)
 {
-	individual->gif = ge_new_gif(individual->outputfile, size_x, size_y, individual->params->palette, PALETTE_DEPTH, 0);
+	individual->gif = ge_new_gif(individual->outputfile, size_x, size_y, individual->parameters->palette, PALETTE_DEPTH, 0);
 	printf("Will write to file %s\n", individual->outputfile);
+	
+	char parametersPath[1024];
+	sprintf(parametersPath, "%s.json", individual->outputfile);
+	ParametersWriteToFile(individual->parameters, parametersPath);
 	int tick = 0;
 	while(tick < max_tick)
 	{
@@ -83,14 +87,14 @@ void IndividualReact(Individual * individual)
 	for(int x = 0; x < size_x; x++)
 		for(int y = 0; y < size_y; y++)
 		{
-			cellReact(individual->params, &(individual->board[x][y]));
+			cellReact(individual->parameters, &(individual->board[x][y]));
 		}
 }
 
 void IndividualDiffuse(Individual * individual)
 {
 	printf("\tDiffusing...\n");
-	int maxIteration = MAX(individual->params->diffusion_speed_a, individual->params->diffusion_speed_i);
+	int maxIteration = MAX(individual->parameters->diffusion_speed_a, individual->parameters->diffusion_speed_i);
 	Cell ** originalBoard = malloc(sizeof(Cell) * size_x);
 	for(int x = 0; x < size_x; x++)
 		originalBoard[x] = malloc(sizeof(Cell) * size_y);
@@ -108,20 +112,20 @@ void IndividualDiffuse(Individual * individual)
 						{
 							int diffuseX = mod(x + dx, size_x);
 							int diffuseY = mod(y + dy, size_y);
-							if(iteration < individual->params->diffusion_speed_a)
+							if(iteration < individual->parameters->diffusion_speed_a)
 							{
-								cellDiffuseA(individual->params, &originalBoard[x][y], &(individual->board[diffuseX][diffuseY]), 8);
+								cellDiffuseA(individual->parameters, &originalBoard[x][y], &(individual->board[diffuseX][diffuseY]), 8);
 							}
-							if(iteration < individual->params->diffusion_speed_i)
+							if(iteration < individual->parameters->diffusion_speed_i)
 							{
-								cellDiffuseI(individual->params, &originalBoard[x][y], &(individual->board[diffuseX][diffuseY]), 8);
+								cellDiffuseI(individual->parameters, &originalBoard[x][y], &(individual->board[diffuseX][diffuseY]), 8);
 							}
 						}
 	}
 	for(int x = 0; x < size_x; x++)
 		for(int y = 0; y < size_y; y++)
 		{
-			cellReact(individual->params, &(individual->board[x][y]));
+			cellReact(individual->parameters, &(individual->board[x][y]));
 		}
 }
 
@@ -131,7 +135,7 @@ void IndividualReduce(Individual * individual)
 	for(int x = 0; x < size_x; x++)
 		for(int y = 0; y < size_y; y++)
 		{
-			cellReduce(individual->params, &(individual->board[x][y]));
+			cellReduce(individual->parameters, &(individual->board[x][y]));
 		}
 }
 
@@ -170,5 +174,5 @@ uint8_t * IndividualThresholding(Individual * individual)
 
 Individual * IndividualCopy(Individual * individual)
 {
-	return IndividualCreate(ParametersCopy(individual->params));
+	return IndividualCreate(ParametersCopy(individual->parameters));
 }

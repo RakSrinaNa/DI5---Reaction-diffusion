@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 #include "headers/parameters.h"
 #include "headers/utils.h"
 #include "headers/constants.h"
@@ -50,4 +51,29 @@ Parameters * ParametersCopy(Parameters * parameters)
 	copy->palette_size = parameters->palette_size;
 	memcpy(copy->palette, parameters->palette, sizeof(uint8_t) * parameters->palette_size);
 	return copy;
+}
+
+void ParametersWriteToFile(Parameters * parameters, char * filepath)
+{
+	FILE * file = fopen(filepath, "w");
+	fprintf(file, "{\n");
+	fprintf(file, "\t\"reaction_rate_a\": %f,\n", parameters->reaction_rate_a);
+	fprintf(file, "\t\"reaction_rate_i\": %f,\n", parameters->reaction_rate_i);
+	fprintf(file, "\t\"diffusion_speed_a\": %d,\n", parameters->diffusion_speed_a);
+	fprintf(file, "\t\"diffusion_speed_i\": %d,\n", parameters->diffusion_speed_i);
+	fprintf(file, "\t\"reduction_rate\": %f,\n", parameters->reduction_rate);
+	fprintf(file, "\t\"diffusion_rate\": %f,\n", parameters->diffusion_rate);
+	fprintf(file, "\t\"colors\": {\n");
+	int paletteCount = parameters->palette_size / 3;
+	for(int paletteIndex = 0; paletteIndex < paletteCount; paletteIndex++)
+	{
+		fprintf(file, "\t\t\"%d\": {\n", paletteIndex);
+		fprintf(file, "\t\t\t\"R\": %d,\n", parameters->palette[paletteIndex * 3]);
+		fprintf(file, "\t\t\t\"G\": %d,\n", parameters->palette[paletteIndex * 3 + 1]);
+		fprintf(file, "\t\t\t\"B\": %d\n", parameters->palette[paletteIndex * 3 + 2]);
+		fprintf(file, "\t\t}%c\n", paletteIndex == (paletteCount - 1) ? ' ' : ',');
+	}
+	fprintf(file, "\t}\n");
+	fprintf(file, "}\n");
+	fclose(file);
 }

@@ -29,4 +29,6 @@ void ParametersDestroy(Parameters * parameters);
 
 Parameters * ParametersCopy(Parameters * parameters);
 
+void ParametersWriteToFile(Parameters * parameters, char * filepath);
+
 #endif //TURING_PARAMETERS_H

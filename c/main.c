@@ -119,33 +119,33 @@ void mutate(Individual * individual, int force)
 {
 	if(force == 1 || getRandom(0, 1) < 0.01)
 	{
-		individual->params->reaction_rate_a = MAX(0, MIN(1, individual->params->reaction_rate_a + getRandom(-0.05, 0.05)));
+		individual->parameters->reaction_rate_a = MAX(0, MIN(1, individual->parameters->reaction_rate_a + getRandom(-0.05, 0.05)));
 	}
 	if(force == 1 || getRandom(0, 1) < 0.01)
 	{
-		individual->params->reaction_rate_i = MAX(0, MIN(1, individual->params->reaction_rate_i + getRandom(-0.05, 0.05)));
+		individual->parameters->reaction_rate_i = MAX(0, MIN(1, individual->parameters->reaction_rate_i + getRandom(-0.05, 0.05)));
 	}
 	if(force == 1 || getRandom(0, 1) < 0.01)
 	{
-		individual->params->diffusion_speed_a = MAX(0, individual->params->diffusion_speed_a + (int) getRandom(-2, 2));
+		individual->parameters->diffusion_speed_a = MAX(0, individual->parameters->diffusion_speed_a + (int) getRandom(-2, 2));
 	}
 	if(force == 1 || getRandom(0, 1) < 0.01)
 	{
-		individual->params->diffusion_speed_i = MAX(0, individual->params->diffusion_speed_i + (int) getRandom(-2, 2));
+		individual->parameters->diffusion_speed_i = MAX(0, individual->parameters->diffusion_speed_i + (int) getRandom(-2, 2));
 	}
 	if(force == 1 || getRandom(0, 1) < 0.01)
 	{
-		individual->params->reduction_rate = MAX(0, MIN(1, individual->params->reduction_rate + getRandom(-0.05, 0.05)));
+		individual->parameters->reduction_rate = MAX(0, MIN(1, individual->parameters->reduction_rate + getRandom(-0.05, 0.05)));
 	}
 	if(force == 1 || getRandom(0, 1) < 0.01)
 	{
-		individual->params->diffusion_rate += MAX(0, MIN(1, individual->params->diffusion_rate + getRandom(-0.05, 0.05)));
+		individual->parameters->diffusion_rate += MAX(0, MIN(1, individual->parameters->diffusion_rate + getRandom(-0.05, 0.05)));
 	}
-	for(int i = 0; i < individual->params->palette_size; i++)
+	for(int i = 0; i < individual->parameters->palette_size; i++)
 	{
 		if(force == 1 || getRandom(0, 1) < 0.01)
 		{
-			individual->params->palette[i] = MAX(0, MIN(255, individual->params->palette[i] + (int) getRandom(-2, 2)));
+			individual->parameters->palette[i] = MAX(0, MIN(255, individual->parameters->palette[i] + (int) getRandom(-2, 2)));
 		}
 	}
 }
@@ -156,31 +156,31 @@ Individual * makeBaby(Individual * parent1, Individual * parent2)
 	Individual * child = IndividualCopy(parent1);
 	if(cutIndex <= 0)
 	{
-		child->params->reaction_rate_a = parent2->params->reaction_rate_a;
+		child->parameters->reaction_rate_a = parent2->parameters->reaction_rate_a;
 	}
 	if(cutIndex <= 1)
 	{
-		child->params->reaction_rate_i = parent2->params->reaction_rate_i;
+		child->parameters->reaction_rate_i = parent2->parameters->reaction_rate_i;
 	}
 	if(cutIndex <= 2)
 	{
-		child->params->diffusion_speed_a = parent2->params->diffusion_speed_a;
+		child->parameters->diffusion_speed_a = parent2->parameters->diffusion_speed_a;
 	}
 	if(cutIndex <= 3)
 	{
-		child->params->diffusion_speed_i = parent2->params->diffusion_speed_i;
+		child->parameters->diffusion_speed_i = parent2->parameters->diffusion_speed_i;
 	}
 	if(cutIndex <= 4)
 	{
-		child->params->reduction_rate = parent2->params->reduction_rate;
+		child->parameters->reduction_rate = parent2->parameters->reduction_rate;
 	}
 	if(cutIndex <= 5)
 	{
-		child->params->diffusion_rate = parent2->params->diffusion_rate;
+		child->parameters->diffusion_rate = parent2->parameters->diffusion_rate;
 	}
 	if(cutIndex <= 6)
 	{
-		child->params->palette = parent2->params->palette;
+		child->parameters->palette = parent2->parameters->palette;
 	}
 	
 	return child;
