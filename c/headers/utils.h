@@ -12,6 +12,6 @@ int mod(int a, int b);
 
 double getRandom(double min, double max);
 
-long getMicrotime();
+long getMicroTime();
 
 #endif //TURING_UTILS_H

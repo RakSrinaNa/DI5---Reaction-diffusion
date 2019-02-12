@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 
-#define PARAMETERS_COUNT 6
+#define PARAMETERS_COUNT 7
 
 typedef struct _Parameters
 {
@@ -17,11 +17,15 @@ typedef struct _Parameters
 	int diffusion_speed_i;
 	double reduction_rate;
 	double diffusion_rate;
+	int palette_size;
+	uint8_t * palette;
 } Parameters;
 
 Parameters * ParametersCreate(double reaction_rate_a, double reaction_rate_i, int diffusion_speed_a, int diffusion_speed_i, double reduction_rate, double diffusion_rate);
 
 Parameters * ParametersCreateRandom();
+
+void ParametersDestroy(Parameters * parameters);
 
 Parameters * ParametersCopy(Parameters * parameters);
 

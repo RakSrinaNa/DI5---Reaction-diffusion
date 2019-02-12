@@ -141,6 +141,13 @@ void mutate(Individual * individual, int force)
 	{
 		individual->params->diffusion_rate += MAX(0, MIN(1, individual->params->diffusion_rate + getRandom(-0.05, 0.05)));
 	}
+	for(int i = 0; i < individual->params->palette_size; i++)
+	{
+		if(force == 1 || getRandom(0, 1) < 0.01)
+		{
+			individual->params->palette[i] = MAX(0, MIN(255, individual->params->palette[i] + (int) getRandom(-2, 2)));
+		}
+	}
 }
 
 Individual * makeBaby(Individual * parent1, Individual * parent2)
@@ -171,5 +178,10 @@ Individual * makeBaby(Individual * parent1, Individual * parent2)
 	{
 		child->params->diffusion_rate = parent2->params->diffusion_rate;
 	}
+	if(cutIndex <= 6)
+	{
+		child->params->palette = parent2->params->palette;
+	}
+	
 	return child;
 }

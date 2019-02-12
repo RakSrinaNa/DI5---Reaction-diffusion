@@ -18,7 +18,7 @@ int mod(int a, int b)
 	return r < 0 ? r + b : r;
 }
 
-long getMicrotime()
+long getMicroTime()
 {
 	struct timeval currentTime;
 	gettimeofday(&currentTime, NULL);

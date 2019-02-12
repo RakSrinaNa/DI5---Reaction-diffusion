@@ -30,15 +30,9 @@ Individual * IndividualCreate(Parameters * params)
 		}
 	}
 	individual->board = board;
-	
-	uint8_t palette[] = {0x5F, 0xEA, 0xDE, 0x8F, 0xDF, 0xCD, 0xBE, 0xD5, 0xBD, 0xEE, 0xCB, 0xAD, 0x8D, 0xAB, 0x8E, 0xF4, 0x8B, 0x6F, 0xF8, 0x6B, 0x50, 0xFB, 0x4B, 0x31};
-	
+	individual->gif = NULL;
 	individual->outputfile = malloc(sizeof(char) * 1024);
-	sprintf(individual->outputfile, "output/%lu.gif", getMicrotime());
-	
-	printf("Will write to file %s\n", individual->outputfile);
-	ge_GIF * gif = ge_new_gif(individual->outputfile, size_x, size_y, palette, PALETTE_DEPTH, 0);
-	individual->gif = gif;
+	sprintf(individual->outputfile, "output/%lu.gif", getMicroTime());
 	
 	return individual;
 }
@@ -52,13 +46,15 @@ void IndividualDestroy(Individual * individual)
 	for(int x = 0; x < size_x; x++)
 		free(individual->board[x]);
 	free(individual->board);
-	free(individual->params);
+	ParametersDestroy(individual->params);
 	free(individual->outputfile);
 	free(individual);
 }
 
 void IndividualGenerate(Individual * individual)
 {
+	individual->gif = ge_new_gif(individual->outputfile, size_x, size_y, individual->params->palette, PALETTE_DEPTH, 0);
+	printf("Will write to file %s\n", individual->outputfile);
 	int tick = 0;
 	while(tick < max_tick)
 	{
