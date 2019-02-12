@@ -5,17 +5,19 @@
 #ifndef TURING_CELL_H
 #define TURING_CELL_H
 
+#include "parameters.h"
+
 typedef struct _Cell{
 	double a;
 	double i;
 } Cell;
 
-void cellReact(Cell * pCell);
+void cellReact(Parameters * parameters, Cell * pCell);
 
-void cellDiffuseA(Cell * pCellSource, Cell * pCellDestination, int coefficient);
+void cellDiffuseA(Parameters * parameters, Cell * pCellSource, Cell * pCellDestination, int coefficient);
 
-void cellDiffuseI(Cell * pCellSource, Cell * pCellDestination, int coefficient);
+void cellDiffuseI(Parameters * parameters, Cell * pCellSource, Cell * pCellDestination, int coefficient);
 
-void cellReduce(Cell * pCell);
+void cellReduce(Parameters * parameters, Cell * pCell);
 
 #endif //TURING_CELL_H
