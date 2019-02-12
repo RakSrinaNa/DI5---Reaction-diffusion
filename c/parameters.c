@@ -73,7 +73,13 @@ void ParametersWriteToFile(Parameters * parameters, char * filepath)
 		fprintf(file, "\t\t\t\"B\": %d\n", parameters->palette[paletteIndex * 3 + 2]);
 		fprintf(file, "\t\t}%c\n", paletteIndex == (paletteCount - 1) ? ' ' : ',');
 	}
-	fprintf(file, "\t}\n");
+	fprintf(file, "\t},\n");
+	fprintf(file, "\t\"image_size\": {\n");
+	fprintf(file, "\t\t\"x\": %d,\n", SIZE_X);
+	fprintf(file, "\t\t\"y\": %d\n", SIZE_Y);
+	fprintf(file, "\t},\n");
+	fprintf(file, "\t\"ticks\": %d,\n", MAX_TICK);
+	fprintf(file, "\t\"fps\": %d\n", GIF_FPS);
 	fprintf(file, "}\n");
 	fclose(file);
 }

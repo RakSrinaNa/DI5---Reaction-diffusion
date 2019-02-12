@@ -19,11 +19,11 @@ Individual * IndividualCreate(Parameters * params)
 	Individual * individual = malloc(sizeof(Individual));
 	individual->parameters = params;
 	
-	Cell ** board = malloc(sizeof(Cell *) * size_x);
-	for(int x = 0; x < size_x; x++)
+	Cell ** board = malloc(sizeof(Cell *) * SIZE_X);
+	for(int x = 0; x < SIZE_X; x++)
 	{
-		board[x] = malloc(sizeof(Cell) * size_y);
-		for(int y = 0; y < size_y; y++)
+		board[x] = malloc(sizeof(Cell) * SIZE_Y);
+		for(int y = 0; y < SIZE_Y; y++)
 		{
 			board[x][y].a = getRandom(1, 100);
 			board[x][y].i = getRandom(1, 100);
@@ -43,7 +43,7 @@ void IndividualDestroy(Individual * individual)
 		return;
 	ge_close_gif(individual->gif);
 	
-	for(int x = 0; x < size_x; x++)
+	for(int x = 0; x < SIZE_X; x++)
 		free(individual->board[x]);
 	free(individual->board);
 	ParametersDestroy(individual->parameters);
@@ -53,16 +53,16 @@ void IndividualDestroy(Individual * individual)
 
 void IndividualGenerate(Individual * individual)
 {
-	individual->gif = ge_new_gif(individual->outputfile, size_x, size_y, individual->parameters->palette, PALETTE_DEPTH, 0);
+	individual->gif = ge_new_gif(individual->outputfile, SIZE_X, SIZE_Y, individual->parameters->palette, PALETTE_DEPTH, 0);
 	printf("Will write to file %s\n", individual->outputfile);
 	
 	char parametersPath[1024];
 	sprintf(parametersPath, "%s.json", individual->outputfile);
 	ParametersWriteToFile(individual->parameters, parametersPath);
 	int tick = 0;
-	while(tick < max_tick)
+	while(tick < MAX_TICK)
 	{
-		printf("Processing tick %02d/%02d...\n", tick + 1, max_tick);
+		printf("Processing tick %02d/%02d...\n", tick + 1, MAX_TICK);
 		IndividualReact(individual);
 		IndividualDiffuse(individual);
 		IndividualReduce(individual);
@@ -77,15 +77,15 @@ void IndividualGenerate(Individual * individual)
 
 void IndividualDraw(Individual * individual, uint8_t * image)
 {
-	memcpy(individual->gif->frame, image, sizeof(uint8_t) * size_x * size_y);
+	memcpy(individual->gif->frame, image, sizeof(uint8_t) * SIZE_X * SIZE_Y);
 	ge_add_frame(individual->gif, 100 / GIF_FPS);
 }
 
 void IndividualReact(Individual * individual)
 {
 	printf("\tReacting...\n");
-	for(int x = 0; x < size_x; x++)
-		for(int y = 0; y < size_y; y++)
+	for(int x = 0; x < SIZE_X; x++)
+		for(int y = 0; y < SIZE_Y; y++)
 		{
 			cellReact(individual->parameters, &(individual->board[x][y]));
 		}
@@ -95,23 +95,23 @@ void IndividualDiffuse(Individual * individual)
 {
 	printf("\tDiffusing...\n");
 	int maxIteration = MAX(individual->parameters->diffusion_speed_a, individual->parameters->diffusion_speed_i);
-	Cell ** originalBoard = malloc(sizeof(Cell) * size_x);
-	for(int x = 0; x < size_x; x++)
-		originalBoard[x] = malloc(sizeof(Cell) * size_y);
+	Cell ** originalBoard = malloc(sizeof(Cell) * SIZE_X);
+	for(int x = 0; x < SIZE_X; x++)
+		originalBoard[x] = malloc(sizeof(Cell) * SIZE_Y);
 	for(int iteration = 0; iteration < maxIteration; iteration++)
 	{
-		for(int x = 0; x < size_x; x++)
+		for(int x = 0; x < SIZE_X; x++)
 		{
 			memcpy(&originalBoard[x], &(individual->board[x]), sizeof(individual->board[x]));
 		}
-		for(int x = 0; x < size_x; x++)
-			for(int y = 0; y < size_y; y++)
+		for(int x = 0; x < SIZE_X; x++)
+			for(int y = 0; y < SIZE_Y; y++)
 				for(int dx = -1; dx < 2; dx++)
 					for(int dy = -1; dy < 2; dy++)
 						if(dx != 0 || dy != 0)
 						{
-							int diffuseX = mod(x + dx, size_x);
-							int diffuseY = mod(y + dy, size_y);
+							int diffuseX = mod(x + dx, SIZE_X);
+							int diffuseY = mod(y + dy, SIZE_Y);
 							if(iteration < individual->parameters->diffusion_speed_a)
 							{
 								cellDiffuseA(individual->parameters, &originalBoard[x][y], &(individual->board[diffuseX][diffuseY]), 8);
@@ -122,8 +122,8 @@ void IndividualDiffuse(Individual * individual)
 							}
 						}
 	}
-	for(int x = 0; x < size_x; x++)
-		for(int y = 0; y < size_y; y++)
+	for(int x = 0; x < SIZE_X; x++)
+		for(int y = 0; y < SIZE_Y; y++)
 		{
 			cellReact(individual->parameters, &(individual->board[x][y]));
 		}
@@ -132,8 +132,8 @@ void IndividualDiffuse(Individual * individual)
 void IndividualReduce(Individual * individual)
 {
 	printf("\tReducing...\n");
-	for(int x = 0; x < size_x; x++)
-		for(int y = 0; y < size_y; y++)
+	for(int x = 0; x < SIZE_X; x++)
+		for(int y = 0; y < SIZE_Y; y++)
 		{
 			cellReduce(individual->parameters, &(individual->board[x][y]));
 		}
@@ -143,18 +143,18 @@ uint8_t * IndividualThresholding(Individual * individual)
 {
 	printf("\tThresholding...\n");
 	double average = 0;
-	for(int x = 0; x < size_x; x++)
-		for(int y = 0; y < size_y; y++)
+	for(int x = 0; x < SIZE_X; x++)
+		for(int y = 0; y < SIZE_Y; y++)
 		{
 			average += individual->board[x][y].a;
 		}
 	int colorsCount = (int) pow(2, PALETTE_DEPTH);
 	int colorsMid = colorsCount / 2;
 	double colorsStep = 1.0 / colorsMid;
-	average /= size_x * size_y;
-	uint8_t * image = malloc(sizeof(uint8_t) * size_x * size_y);
-	for(int x = 0; x < size_x; x++)
-		for(int y = 0; y < size_y; y++)
+	average /= SIZE_X * SIZE_Y;
+	uint8_t * image = malloc(sizeof(uint8_t) * SIZE_X * SIZE_Y);
+	for(int x = 0; x < SIZE_X; x++)
+		for(int y = 0; y < SIZE_Y; y++)
 		{
 			double value = individual->board[x][y].a;
 			double coefficient = value / average;
@@ -167,7 +167,7 @@ uint8_t * IndividualThresholding(Individual * individual)
 					break;
 				}
 			}
-			image[x + y * size_x] = color;
+			image[x + y * SIZE_X] = color;
 		}
 	return image;
 }
