@@ -16,7 +16,7 @@ Generation * GenerationCreate()
 void GenerationDestroy(Generation * generation)
 {
 	for(int i = 0; i < generation->populationSize; i++)
-		free(generation->individuals[i]);
+		IndividualDestroy(generation->individuals[i]);
 	free(generation->individuals);
 	free(generation);
 }

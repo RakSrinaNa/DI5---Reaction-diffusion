@@ -32,4 +32,6 @@ void IndividualReduce(Individual * individual);
 
 uint8_t * IndividualThresholding(Individual * individual);
 
+Individual * IndividualCopy(Individual * individual);
+
 #endif //TURING_INDIVIDUAL_H

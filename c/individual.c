@@ -171,3 +171,8 @@ uint8_t * IndividualThresholding(Individual * individual)
 		}
 	return image;
 }
+
+Individual * IndividualCopy(Individual * individual)
+{
+	return IndividualCreate(ParametersCopy(individual->params));
+}

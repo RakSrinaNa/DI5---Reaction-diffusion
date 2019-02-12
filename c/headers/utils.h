@@ -6,6 +6,7 @@
 #define TURING_UTILS_H
 
 #define MAX(x, y) (x >= y ? x : y)
+#define MIN(x, y) (x <= y ? x : y)
 
 int mod(int a, int b);
 
