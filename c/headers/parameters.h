@@ -6,6 +6,9 @@
 #define TURING_PARAMETERS_H
 
 #include <stdlib.h>
+#ifdef _WIN32
+#include <stdint-gcc.h>
+#endif
 
 #define PARAMETERS_COUNT 7
 

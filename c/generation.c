@@ -3,6 +3,7 @@
 //
 
 #include <stdlib.h>
+#include <pthread.h>
 #include "headers/generation.h"
 
 Generation * GenerationCreate()
@@ -37,6 +38,18 @@ int GenerationAppend(Generation * generation, Individual * individual)
 
 void GenerationGenerate(Generation * generation)
 {
-	for(int i = 0; i < generation->populationSize; i++)
-		IndividualGenerate(generation->individuals[i]);
+	pthread_t * threads = malloc(sizeof(pthread_t) * generation->populationSize);
+	
+	for(int i = 0; i < generation->populationSize; ++i)
+	{
+		pthread_create(threads + i, NULL, IndividualGenerateThread, (void *) (generation->individuals[i]));
+	}
+	
+	/* wait for threads to finish */
+	for(int i = 0; i < generation->populationSize; ++i)
+	{
+		pthread_join(threads[i], NULL);
+	}
+	//	for(int i = 0; i < generation->populationSize; i++)
+	//		IndividualGenerate(generation->individuals[i]);
 }

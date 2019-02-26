@@ -22,6 +22,8 @@ void IndividualDestroy(Individual * individual);
 
 void IndividualGenerate(Individual * individual);
 
+void * IndividualGenerateThread(void * individual);
+
 void IndividualDraw(Individual * individual, uint8_t * image);
 
 void IndividualReact(Individual * individual);

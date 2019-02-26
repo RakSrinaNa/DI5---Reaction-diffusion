@@ -32,7 +32,7 @@ Individual * IndividualCreate(Parameters * params)
 	individual->board = board;
 	individual->gif = NULL;
 	individual->outputfile = malloc(sizeof(char) * 1024);
-	sprintf(individual->outputfile, "output/%lu.gif", getMicroTime());
+	sprintf(individual->outputfile, "output/%lu-%d.gif", getMicroTime(), (int) getRandom(0, 1000));
 	
 	return individual;
 }
@@ -41,7 +41,6 @@ void IndividualDestroy(Individual * individual)
 {
 	if(individual == NULL)
 		return;
-	ge_close_gif(individual->gif);
 	
 	for(int x = 0; x < SIZE_X; x++)
 		free(individual->board[x]);
@@ -62,17 +61,37 @@ void IndividualGenerate(Individual * individual)
 	int tick = 0;
 	while(tick < MAX_TICK)
 	{
-		printf("Processing tick %02d/%02d...\n", tick + 1, MAX_TICK);
+		printf("%s => Processing tick %02d/%02d...\n", individual->outputfile, tick + 1, MAX_TICK);
 		IndividualReact(individual);
 		IndividualDiffuse(individual);
 		IndividualReduce(individual);
 		uint8_t * image = IndividualThresholding(individual);
 		tick++;
 		IndividualDraw(individual, image);
+		
+//		char file[1024];
+//		sprintf(&file, "%s-%d.txt", individual->outputfile, tick);
+//		FILE * ff = fopen(file, "w");
+//		for(int i = 0; i < SIZE_X; i++)
+//		{
+//			for(int j = 0; j < SIZE_Y; j++)
+//			{
+//				fprintf(ff, "%lf ", individual->board[i][j].a);
+//			}
+//			fprintf(ff, "\n");
+//		}
+//		fclose(ff);
 		free(image);
 	}
+	ge_close_gif(individual->gif);
 	
 	printf("Done\n");
+}
+
+void * IndividualGenerateThread(void * individual)
+{
+	IndividualGenerate(individual);
+	return NULL;
 }
 
 void IndividualDraw(Individual * individual, uint8_t * image)

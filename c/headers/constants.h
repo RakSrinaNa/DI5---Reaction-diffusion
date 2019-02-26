@@ -4,8 +4,8 @@
 #define GIF_FPS 30
 #define PALETTE_DEPTH 3
 
-#define MAX_TICK 100
-#define SIZE_X 100
-#define SIZE_Y 100
+#define MAX_TICK 250
+#define SIZE_X 50
+#define SIZE_Y 50
 
 #endif //TURING_CONSTANTS_H

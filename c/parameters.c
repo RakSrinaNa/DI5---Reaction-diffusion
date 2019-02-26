@@ -9,6 +9,10 @@
 #include "headers/utils.h"
 #include "headers/constants.h"
 
+#ifdef _WIN32
+#include <stdint-gcc.h>
+#endif
+
 Parameters * ParametersCreate(double reaction_rate_a, double reaction_rate_i, int diffusion_speed_a, int diffusion_speed_i, double reduction_rate, double diffusion_rate)
 {
 	Parameters * parameters = malloc(sizeof(Parameters));
@@ -49,6 +53,7 @@ Parameters * ParametersCopy(Parameters * parameters)
 	copy->reduction_rate = parameters->reduction_rate;
 	copy->diffusion_rate = parameters->diffusion_rate;
 	copy->palette_size = parameters->palette_size;
+	copy->palette = malloc(sizeof(uint8_t) * parameters->palette_size);
 	memcpy(copy->palette, parameters->palette, sizeof(uint8_t) * parameters->palette_size);
 	return copy;
 }

@@ -23,6 +23,7 @@
 
 int main(int argv, char ** argc)
 {
+	setbuf(stdout, 0);
 	printf("Starting...\n");
 	
 	srand(time(NULL));
@@ -45,21 +46,31 @@ int main(int argv, char ** argc)
 		printf("Generating generation...\n");
 		
 		GenerationGenerate(generation);
+		char filename[1024];
+		CreateHTML(filename, generation);
+		char command[1024];
+		sprintf(command, "open %s", filename);
+		printf("Opening %s result: %d\n", filename, system(command));
 		
 		printf("Create new generation (1=yes, 0=no)? ");
 		scanf("%d", &generate);
 		
 		if(generate == 1)
 		{
+			printf("Sequence to keep: ");
+			int keep = 0;
+			scanf("%d", &keep);
+			
 			int parentsCount = 0;
 			Individual ** parents = malloc(sizeof(Individual *) * generation->populationSize);
-			for(int individualIndex = 0; individualIndex < generation->populationSize; individualIndex++)
+			for(int individualIndex = generation->populationSize - 1; individualIndex >= 0; individualIndex--)
 			{
-				if(keepParent(generation->individuals[individualIndex]) == 1)
+				if(keep % 2 == 1)
 				{
 					parents[parentsCount] = generation->individuals[individualIndex];
 					parentsCount++;
 				}
+				keep /= 10;
 			}
 			
 			Generation * newGeneration = GenerationCreate();
@@ -107,10 +118,38 @@ int main(int argv, char ** argc)
 	return 0;
 }
 
-int keepParent(Individual * individual)
+void CreateHTML(char * filename, Generation * pGeneration)
+{
+	sprintf(filename, "output/output-%lu-.html", getMicroTime());
+	FILE * htmlFile = fopen(filename, "w");
+	
+	fprintf(htmlFile, "<html><body><table>");
+	
+	for(int i = 0; i < pGeneration->populationSize; i++)
+	{
+		Individual * individual = pGeneration->individuals[i];
+		if(i % 2 == 0)
+		{
+			fprintf(htmlFile, "<tr>");
+		}
+		
+		fprintf(htmlFile, "<td>%d - %s</td><td><img src=\"../%s\"/></td>", i + 1, individual->outputfile, individual->outputfile);
+		
+		if(i % 2 != 0 || i == pGeneration->populationSize - 1)
+		{
+			fprintf(htmlFile, "</tr>");
+		}
+	}
+	
+	fprintf(htmlFile, "</table></body></html>");
+	
+	fclose(htmlFile);
+}
+
+int keepParent(int individualIndex, Individual * individual)
 {
 	int keep = 0;
-	printf("Keep %s as a parent (1=yes, 0=no)? ", individual->outputfile);
+	printf("Keep %d - %s as a parent (1=yes, 0=no)? ", individualIndex + 1, individual->outputfile);
 	scanf("%d", &keep);
 	return keep;
 }
@@ -180,7 +219,7 @@ Individual * makeBaby(Individual * parent1, Individual * parent2)
 	}
 	if(cutIndex <= 6)
 	{
-		child->parameters->palette = parent2->parameters->palette;
+		memcpy(child->parameters->palette, parent2->parameters->palette, sizeof(uint8_t) * parent2->parameters->palette_size);
 	}
 	
 	return child;
